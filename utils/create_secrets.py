@@ -3,7 +3,7 @@ import secrets as s
 
 import config
 
-clients = config.CLIENTS_NUM
+clients = config.clients_num
 base_dir = config.basedir
 token_file_path = os.path.join(base_dir, "tokens.txt")
 
