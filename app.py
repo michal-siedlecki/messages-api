@@ -52,9 +52,44 @@ def home():
 
 # A route to return all of the available entries in the system.
 @app.route('/' + API_URL + '/messages', methods=['GET'])
-def listMessages() -> object:
+def MessagesListView() -> object:
+    """
+        This function returns all messages in the system
+
+        :rtype: object
+        :return:
+        {
+            "id": "1",
+            "content": "Russia’s Foreign Intelligence Service (SVR) director Sergei Naryshkin had said he was “flattered” by the accusations from the UK and US but denied involvement.",
+            "views": 23
+        },
+        {
+            "id": "2",
+            "content": "Turtle nesting and hatching season is between February and August in Puerto Rico and its beaches attract several protected species, including the endangered leatherback.",
+            "views": 3
+        }
+   """
     result = MessageModel.query.all()
     return messages_schema.jsonify(result)
+
+
+@app.route('/' + API_URL + '/messages/<id>', methods=['GET'])
+def MessagesDetailView(id) -> object:
+    """
+        This function returns detail view for message with secified id.
+
+        :param id:
+        :return:
+        :rtype: object
+        :return:
+        {
+            "id": "1",
+            "content": "Russia’s Foreign Intelligence Service (SVR) director Sergei Naryshkin had said he was “flattered” by the accusations from the UK and US but denied involvement.",
+            "views": 23
+        }
+   """
+    result = MessageModel.query.filter_by(id=id).first()
+    return message_schema.jsonify(result)
 
 
 if __name__ == '__main__':
