@@ -56,8 +56,15 @@ unauthorized_403 = {
 not_found_error_404 = {
         "code": 404,
         "name": "Not found",
-        "description": "Not found the resource with requested id",
+        "description": "Not found the resource with requested URL.",
     }
+
+method_not_allowed_405 = {
+        "code": 405,
+        "name": "Method Not Allowed",
+        "description": "The method is not allowed for the requested URL.",
+    }
+
 
 payload_too_large_413 = {
         "code": 413,
@@ -173,15 +180,75 @@ def MessagesCreateView() -> object:
             db.session.add(message)
             db.session.commit()
 
-            messages = MessageModel.query.all()
-            for message in messages:
-                message.views += 1
-                db.session.add(message)
-                db.session.commit()
-
-            return messages_schema.jsonify(messages)
+            return MessagesListView()
 
     return make_response(jsonify(unauthorized_403), 403)
+
+
+# A route to create a new message.
+@app.route('/' + API_URL + '/messages/<id>', methods=['PATCH'])
+def MessagesUpdateView(id) -> object:
+    """
+        This function updates the existing message.
+
+        :rtype: object
+        :return:
+        {
+            "id": "1",
+            "content": "Russia’s Foreign Intelligence Service (SVR) director Sergei Naryshkin had said he was “flattered” by the accusations from the UK and US but denied involvement.",
+            "views": 23
+        }
+
+   """
+    content = request.get_json().get('content')
+    if len(content) > MAX_CONTENT_LENGTH:
+        return make_response(jsonify(payload_too_large_413), 413)
+    if content == "":
+        return make_response(jsonify(bad_request_400), 400)
+
+    password = request.get_json().get('password')
+
+    for token in tokens:
+        if password == token:
+            message = MessageModel.query.filter_by(id=id).first()
+            message.content = content
+            db.session.add(message)
+            db.session.commit()
+
+            return MessagesDetailView(id)
+
+    return make_response(jsonify(unauthorized_403), 403)
+
+
+@app.route('/' + API_URL + '/messages/<id>', methods=['DELETE'])
+def MessagesDeleteView(id) -> object:
+    """
+        This function delete message with secified id.
+
+        :param id:
+        :return:
+        :rtype: object
+        :return:
+        {
+            "id": "1",
+            "content": "Russia’s Foreign Intelligence Service (SVR) director Sergei Naryshkin had said he was “flattered” by the accusations from the UK and US but denied involvement.",
+            "views": 23
+        }
+   """
+    message = MessageModel.query.filter_by(id=id).first()
+    if message:
+        password = request.get_json().get('password')
+
+        for token in tokens:
+            if password == token:
+
+                db.session.delete(message)
+                db.session.commit()
+
+        return MessagesListView()
+    else:
+        return make_response(jsonify(not_found_error_404), 404)
+
 
 
 
