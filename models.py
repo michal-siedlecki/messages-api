@@ -1,4 +1,4 @@
-from config import db, ma
+from app import db, ma
 
 
 class MessageModel(db.Model):

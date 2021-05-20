@@ -1,10 +1,31 @@
+import json
+
 from flask import request, jsonify, make_response
 
+import config
+from app import db
 from models import MessageModel, message_schema, messages_schema
-from config import db, tokens, API_URL, app_info, MAX_CONTENT_LENGTH
 
+
+with open('utils/error_codes.json', 'r') as f:
+    error_msgs = json.load(f)
+
+TOKEN = config.TOKEN
+API_URL = config.API_URL
+MAX_CONTENT = config.MAX_CONTENT
 
 # :::::::::::::::::: UTILS ::::::::::::::::::::::::::
+
+def get_app_info():
+    return {
+        'App name': 'Messages API',
+        'links':
+            {
+                'self': '',
+                'items': ''
+            }
+    }
+
 
 def home_links(request):
     host = request.headers.get('Host')
@@ -12,79 +33,46 @@ def home_links(request):
     links = {
         'links': {
             'self': path,
-            'items': f'{path}{API_URL}/messages'
+            'items': f'{path}{API_URL}'
         }
     }
     return links
+
 
 def list_link(request):
     host = request.headers.get('Host')
     path = f'http://{host}{request.path}{API_URL}'
     links = {
         'links': {
-            'items': f'{path}{API_URL}/messages'
+            'items': f'{path}{API_URL}'
         }
     }
     return links
+
 
 def detail_link(request, id):
     host = request.headers.get('Host')
     path = f'http://{host}{request.path}{API_URL}'
     links = {
         'links': {
-            'self': f'{path}{API_URL}/messages/{id}',
-            'items': f'{path}{API_URL}/messages'
+            'self': f'{path}{API_URL}/{id}',
+            'items': f'{path}{API_URL}'
         }
     }
     return links
-
-
-# :::::::::::::::::: ERRORS ::::::::::::::::::::::::::
-bad_request_400 = {
-        "code": 400,
-        "name": "Bad Request",
-        "description": f"There is no content in request",
-    }
-
-unauthorized_403 = {
-        "code": 403,
-        "name": "Unauthorized",
-        "description": "Unauthorized users cannot create, update or delete messages",
-    }
-
-not_found_error_404 = {
-        "code": 404,
-        "name": "Not found",
-        "description": "Not found the resource with requested URL.",
-    }
-
-method_not_allowed_405 = {
-        "code": 405,
-        "name": "Method Not Allowed",
-        "description": "The method is not allowed for the requested URL.",
-    }
-
-
-payload_too_large_413 = {
-        "code": 413,
-        "name": "Payload Too Large",
-        "description": f"The maximum content length is {MAX_CONTENT_LENGTH}",
-    }
 
 
 # :::::::::::::::::: API VIEWS ::::::::::::::::::::::::::
 
 
 def info_view():
-
     links = home_links(request)
+    app_info = get_app_info()
     app_info.update(links)
-
     return make_response(jsonify(app_info), 200)
 
 
 def messages_list_view() -> object:
-
     messages = MessageModel.query.all()
     for message in messages:
         message.views += 1
@@ -95,11 +83,9 @@ def messages_list_view() -> object:
 
 
 def message_detail_view(id) -> object:
-
-
     message = MessageModel.query.filter_by(id=id).first()
     if not message:
-        return make_response(jsonify(**not_found_error_404), 404)
+        return make_response(jsonify(**error_msgs.get('not_found_error_404')), 404)
 
     message.views += 1
     db.session.add(message)
@@ -111,58 +97,61 @@ def message_detail_view(id) -> object:
 def message_create_view() -> object:
 
     content = request.get_json().get('content')
-    if len(content) > MAX_CONTENT_LENGTH:
-        return make_response(jsonify(payload_too_large_413), 413)
+    if len(content) > MAX_CONTENT:
+        e = error_msgs.get('payload_too_large_413')
+        return make_response(jsonify(e), 413)
     if content == "":
-        return make_response(jsonify(bad_request_400), 400)
+        e = error_msgs.get('bad_request_400')
+        return make_response(jsonify(**e), 400)
 
     password = request.get_json().get('password')
 
-    for token in tokens:
-        if password == token:
-            message = MessageModel(content=content, views=0)
-            db.session.add(message)
-            db.session.commit()
 
-            return messages_list_view()
+    if password == TOKEN:
+        message = MessageModel(content=content, views=0)
+        db.session.add(message)
+        db.session.commit()
 
-    return make_response(jsonify(unauthorized_403), 403)
+        return make_response(messages_list_view(), 201)
+    e = error_msgs.get('unauthorized_403')
+    return make_response(jsonify(**e), 403)
 
 
 def message_update_view(id) -> object:
-
     content = request.get_json().get('content')
-    if len(content) > MAX_CONTENT_LENGTH:
-        return make_response(jsonify(payload_too_large_413), 413)
+    if len(content) > MAX_CONTENT:
+        e = error_msgs.get('payload_too_large_413')
+        return make_response(jsonify(**e), 413)
     if content == "":
-        return make_response(jsonify(bad_request_400), 400)
+        e = error_msgs.get('bad_request_400')
+        return make_response(jsonify(**e), 400)
 
     password = request.get_json().get('password')
 
-    for token in tokens:
-        if password == token:
-            message = MessageModel.query.filter_by(id=id).first()
-            message.content = content
-            db.session.add(message)
-            db.session.commit()
 
-            return message_detail_view(id)
+    if password == TOKEN:
+        message = MessageModel.query.filter_by(id=id).first()
+        message.content = content
+        db.session.add(message)
+        db.session.commit()
 
-    return make_response(jsonify(unauthorized_403), 403)
+        return message_detail_view(id)
+
+    e = error_msgs.get('unauthorized_403')
+    return make_response(jsonify(**e), 403)
 
 
 def message_delete_view(id) -> object:
-
     message = MessageModel.query.filter_by(id=id).first()
     if message:
         password = request.get_json().get('password')
 
-        for token in tokens:
-            if password == token:
 
-                db.session.delete(message)
-                db.session.commit()
+        if password == TOKEN:
+            db.session.delete(message)
+            db.session.commit()
 
         return messages_list_view()
     else:
-        return make_response(jsonify(not_found_error_404), 404)
+        e = error_msgs.get('not_found_error_404')
+        return make_response(jsonify(**e), 404)

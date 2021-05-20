@@ -1,42 +1,38 @@
 import os
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 
-
-
-app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 os.chdir(basedir)
 
 
-def get_tokens():
-    with open('tokens.txt', 'r') as f:
-        tokens = f.read().split('\n')
-    return tokens
+class Config(object):
+    """Parent configuration class."""
+    DEBUG = False
+    CSRF_ENABLED = True
+    SECRET = os.getenv('SECRET')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = '21fsd32fds3rvfsdr3gf'
-app.config['DEBUG'] = True
+class DevelopmentConfig(Config):
+    """Configurations for Development."""
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
 
-clients_num = 5
-tokens = get_tokens()
-API_VERSION = 'v1'
-API_URL = 'api/' + API_VERSION
-MAX_CONTENT_LENGTH = 160
+class TestingConfig(Config):
+    """Configurations for Testing, with a separate test database."""
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db_test.sqlite')
+    DEBUG = True
 
-# Create some test data for app.
-app_info = {
-    'App name': 'Messages API',
-    'API version': API_VERSION,
-    'links':
-        {
-            'self': '',
-            'items': ''
-        }
+
+app_config = {
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
 }
+
+
+API_URL = 'api/v1/messages'
+SECRET_KEY = '21fsd32fds3rvfsdr3gf'
+TOKEN = '21fsd32fds3rvfsdr3gf'
+MAX_CONTENT = 160
