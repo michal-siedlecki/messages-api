@@ -132,6 +132,7 @@ def message_update_view(id) -> object:
     if password == TOKEN:
         message = MessageModel.query.filter_by(id=id).first()
         message.content = content
+        message.views = 0
         db.session.add(message)
         db.session.commit()
 

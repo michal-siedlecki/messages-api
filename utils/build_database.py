@@ -1,7 +1,7 @@
 import os
 import json
 
-from messages_app import db
+from app import db
 from models import MessageModel
 
 # Create new database file (remove old)
