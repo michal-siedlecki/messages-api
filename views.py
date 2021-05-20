@@ -147,12 +147,13 @@ def message_delete_view(id) -> object:
     if message:
         password = request.get_json().get('password')
 
-
         if password == TOKEN:
             db.session.delete(message)
             db.session.commit()
+            return messages_list_view()
+        else:
+            e = error_msgs.get('unauthorized_403')
+            return make_response(jsonify(**e), 403)
 
-        return messages_list_view()
-    else:
-        e = error_msgs.get('not_found_error_404')
-        return make_response(jsonify(**e), 404)
+    e = error_msgs.get('not_found_error_404')
+    return make_response(jsonify(**e), 404)
