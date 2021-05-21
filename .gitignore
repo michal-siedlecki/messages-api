@@ -4,3 +4,6 @@ __pycache__
 # IDE folder
 .idea
 .idea/
+
+# Helper informations
+info.txt

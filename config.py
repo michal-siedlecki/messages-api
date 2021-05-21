@@ -1,5 +1,13 @@
 import os
 
+# ::::::::::::::::::::::::::::::::::::::::::::::
+
+TOKEN = 'token'
+API_URL = 'api'
+MAX_CONTENT = 160
+
+# ::::::::::::::::::::::::::::::::::::::::::::::
+
 class Config:
     DEBUG = False
     DEVELOPMENT = False
@@ -16,3 +24,9 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     DEVELOPMENT = True
+
+class TestingConfig(Config):
+    DEBUG = True
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "postgresql:///messages_testing"
+

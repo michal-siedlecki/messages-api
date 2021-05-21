@@ -1,0 +1,40 @@
+{
+  "bad_request_400": {
+      "code": 400,
+      "name": "Bad Request",
+      "description": "There is no content in request"
+  },
+  "unauthorized_403" : {
+      "code": 403,
+      "name": "Unauthorized",
+      "description": "Unauthorized users cannot create, update or delete messages"
+  },
+  "not_found_error_404": {
+      "code": 404,
+      "name": "Not found",
+      "description": "Not found the resource with requested URL."
+  },
+  "method_not_allowed_405" : {
+      "code": 405,
+      "name": "Method Not Allowed",
+      "description": "The method is not allowed for the requested URL."
+  },
+  "payload_too_large_413" : {
+      "code": 413,
+      "name": "Payload Too Large",
+      "description": "The maximum content length is 160"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
