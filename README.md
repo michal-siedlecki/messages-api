@@ -49,17 +49,11 @@ Now You can run prepared migrations to populate database:
 ```
 python manage.py db upgrade
 ```
-In order to run Messages API application type:
-
-```
-flask run
-```
-
 
 
 ## Using Messages API
 
-To use Messages API type:
+In order to use Messages API type:
 
 ```
 flask run
@@ -150,7 +144,7 @@ Since it is API type application below is the description of requests:
 
 ### Request
 
-`GET /messages/id`
+`GET /api/v1/messages/id`
 
     curl -i -H 'Accept: application/json' http://localhost:5000/api/v1/messages/1
 
@@ -168,7 +162,7 @@ Since it is API type application below is the description of requests:
 
 ### Request
 
-`GET /message/non-existing-id`
+`GET /api/v1/messages/non-existing-id`
 
     curl -i -H 'Accept: application/json' http://localhost:5000/messages/9999
 
@@ -190,7 +184,7 @@ Since it is API type application below is the description of requests:
 
 ### Request
 
-`PATCH /messages/id`
+`PATCH /api/v1/messages/id`
 
     curl -i -H 'Accept: application/json' -d 'content=Welcome&password=token' http://localhost:5000/api/v1/messages/1
 
@@ -213,7 +207,7 @@ Since it is API type application below is the description of requests:
 
 ### Request
 
-`DELETE /messages/id`
+`DELETE /api/v1/messages/id`
 
     curl -i -H 'Accept: application/json' -d 'password=token' http://localhost:5000/api/v1/messages/1
 
@@ -233,7 +227,7 @@ Since it is API type application below is the description of requests:
 
 ### Request
 
-`POST /messages/`
+`POST /api/v1/messages/`
 
     curl -i -H 'Accept: application/json' -X POST -d 'password=oops' http://localhost:5000/api/v1/messages
 
