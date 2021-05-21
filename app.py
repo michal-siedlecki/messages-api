@@ -4,15 +4,11 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import API_URL
 
-
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-
-
-from models import MessageModel
 import views
 
 
@@ -26,6 +22,7 @@ def info():
 @app.route(f'/{API_URL}', methods=['GET'])
 def list_view() -> object:
     return views.messages_list_view()
+
 
 # A route to get message details.
 @app.route(f'/{API_URL}/<pk>', methods=['GET'])
