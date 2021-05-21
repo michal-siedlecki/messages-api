@@ -23,3 +23,12 @@ class MessageModel(db.Model):
             'content': self.content,
             'views': self.views
         }
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def add_view(self):
+        self.views += 1
+        db.session.add(self)
+        db.session.commit()
