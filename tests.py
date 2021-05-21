@@ -2,7 +2,7 @@ import json
 import unittest
 
 from app import app
-from models import MessageModel
+from messages.models import MessageModel
 from config import API_URL, TOKEN
 
 

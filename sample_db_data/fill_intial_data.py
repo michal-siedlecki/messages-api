@@ -1,8 +1,7 @@
 import json
 
 from app import db
-from models import MessageModel
-
+from messages.models import MessageModel
 
 db.create_all()
 

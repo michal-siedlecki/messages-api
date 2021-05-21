@@ -4,7 +4,7 @@ from flask import request, jsonify, make_response
 
 import config
 from app import db
-from models import MessageModel
+from messages.models import MessageModel
 
 
 with open('error_codes.json', 'r') as f:
@@ -82,8 +82,12 @@ def messages_list_view() -> object:
     return jsonify([m.serialize for m in messages])
 
 
-def message_detail_view(id) -> object:
-    message = MessageModel.query.filter_by(id=id).first()
+def message_detail_view(pk_str) -> object:
+    try :
+        pk = int(pk_str)
+    except ValueError:
+        return make_response(jsonify(**error_msgs.get('not_found_error_404')), 404)
+    message = MessageModel.query.filter_by(id=pk).first()
     if not message:
         return make_response(jsonify(**error_msgs.get('not_found_error_404')), 404)
 

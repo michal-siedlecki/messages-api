@@ -68,7 +68,7 @@ export TOKEN='token'
 ## Application demo:
 
 - Get all messages:
-http://messages-app-pl.herokuapp.com/api/v1/messages/
+http://messages-app-pl.herokuapp.com/api/v1/messages
 - Get message detail:
 http://messages-app-pl.herokuapp.com/api/v1/messages/1
 
