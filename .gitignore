@@ -1,2 +1,6 @@
 venv
 __pycache__
+
+# IDE folder
+.idea
+.idea/
