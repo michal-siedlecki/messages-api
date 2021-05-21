@@ -1,4 +1,4 @@
-from app import db, ma
+from app import db
 
 class MessageModel(db.Model):
     __tablename__ = "message_model"
@@ -6,12 +6,3 @@ class MessageModel(db.Model):
     content = db.Column(db.String(160))
     views = db.Column(db.Integer, default=1)
 
-
-class MessageModelSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = MessageModel
-        fields = ['id', 'content', 'views']
-
-
-message_schema = MessageModelSchema()
-messages_schema = MessageModelSchema(many=True)
