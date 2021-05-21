@@ -13,5 +13,13 @@ class MessageModel(db.Model):
         return {
             'id': self.id,
             'content': self.content,
+        }
+
+    @property
+    def serialize_detail(self):
+        """Return object data in easily serializable format"""
+        return {
+            'id': self.id,
+            'content': self.content,
             'views': self.views
         }

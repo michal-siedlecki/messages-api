@@ -91,7 +91,7 @@ def message_detail_view(id) -> object:
     db.session.add(message)
     db.session.commit()
 
-    return make_response(jsonify(message.serialize()), 200)
+    return make_response(jsonify(message.serialize_detail), 200)
 
 
 def message_create_view() -> object:
