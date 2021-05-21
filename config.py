@@ -3,7 +3,7 @@ import os
 # ::::::::::::::::::::::::::::::::::::::::::::::
 
 TOKEN = os.getenv('TOKEN')
-API_URL = 'api/v1/messages/'
+API_URL = 'api/v1/messages'
 MAX_CONTENT = 160
 
 # ::::::::::::::::::::::::::::::::::::::::::::::

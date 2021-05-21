@@ -63,9 +63,17 @@ Now app is available under localhost:8000.
 `POST | PATCH | DELETE` Theise methods require authentication. The authentication token can be set in evironmental variable by typing:
 ```
 export TOKEN='token'
-```  
-Since it is API type application below is the description of requests:
+``` 
 
+## Application demo:
+
+- Get all messages:
+http://messages-app-pl.herokuapp.com/api/v1/messages/
+- Get message detail:
+http://messages-app-pl.herokuapp.com/api/v1/messages/1
+
+# Requests description
+Since it is API type application below is the description of requests:
 
 ## Get application info
 
@@ -229,7 +237,7 @@ Since it is API type application below is the description of requests:
 
 `POST /api/v1/messages/`
 
-    curl -i -H 'Accept: application/json' -X POST -d 'password=oops' http://localhost:5000/api/v1/messages
+    curl -i -H 'Accept: application/json' -X POST -d 'content=Hi&password=oops' http://localhost:5000/api/v1/messages
 
 ### Response
 
@@ -246,20 +254,79 @@ Since it is API type application below is the description of requests:
     }
 
 
+## Attempt to create a message with too long content
 
-## Contributors
+### Request
 
-Thanks to the following people who have contributed to this project:
+`POST /api/v1/messages/`
 
-* [@michal-siedlecki](https://github.com/michal-siedlecki) 😎 [author]
+    curl -i -H 'Accept: application/json' -d 'content=Moscow shows off its military hardware at the top of the world as the race for resources increases tensions between Russia and NATOMoscow shows off its military hardware at the top of the world as the race for resources increases tensions between Russia and NATO allies&password=token' http://localhost:5000/api/v1/messages
 
+
+### Response
+
+    HTTP/1.0 413 REQUEST ENTITY TOO LARGE
+    Content-Type: application/json
+    Content-Length: 90
+    Server: Werkzeug/2.0.1 Python/3.6.9
+    Date: Fri, 21 May 2021 16:46:23 GMT
+
+    {
+    "code": 413,
+    "description": "The maximum content length is 160",
+    "name": "Payload Too Large"
+    }
+
+
+## Tests
+
+Several unit tests have been prepared for the application. To run the tests type:
+````buildoutcfg
+python tests.py
+````
+
+
+## Deployment
+
+Messages API is deployed on Heroku Cloud Application using Heroku CLI. It is installed by:
+```buildoutcfg
+curl https://cli-assets.heroku.com/install.sh | sh
+```
+
+After installation You can login into CLI and create application:
+```buildoutcfg
+heroku login
+
+heroku create messages-example-app
+````
+
+Since application was created using git version control it has to be pushed using command:
+````buildoutcfg
+git push heroku master
+````
+After that it's needed to set environmental variables using Heroku app settings in heroku dashboard.
+Then set up the database:
+```buildoutcfg
+heroku addons:create heroku-postgresql:hobby-dev --app messages-example-app
+```
+You can see that since this moment Heroku set `DATABASE_URL` environmental variable to a value. Using migrations populate database with tables.
+```buildoutcfg
+heroku run python manage.py db upgrade --app messages-example-app
+```
+Applicaiton is deployed. 
+Now when there is need to change You have to push it on Heroku:
+```buildoutcfg
+git push heroku master
+```
 
 ## Contact
+
+* [@michal-siedlecki](https://github.com/michal-siedlecki) 😎 [author]
 
 If you want to contact me you can reach me at <siedlecki.michal@gmail.com>.
 
 ## License
 
-This project uses the following license: MIT (<https://github.com/michal-siedlecki/messages-api/blob/main/LICENSE>).
+This project uses the following license: MIT (<https://github.com/michal-siedlecki/messages-api/blob/master/LICENSE>).
 
 
