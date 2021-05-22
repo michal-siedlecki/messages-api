@@ -38,3 +38,7 @@ class MessageModel(db.Model):
         self.views = 0
         db.session.add(self)
         db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()

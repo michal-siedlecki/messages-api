@@ -1,24 +1,20 @@
 import json
 from config import MAX_CONTENT, TOKEN
-from flask import request, jsonify, make_response
+from flask import jsonify, make_response
 
 with open('error_codes.json', 'r') as f:
     error_msgs = json.load(f)
 
+
 # :::::::::::::::::: DECORATORS ::::::::::::::::::::::::::
 
 
-
-def validate_pk(pk):
-    try :
-        pk = int(pk)
-    except ValueError:
-        return make_response(jsonify(**error_msgs.get('not_found_error_404')), 404)
-    try :
-        pk = int(pk)
-    except TypeError:
-        return make_response(jsonify(**error_msgs.get('not_found_error_404')), 404)
-    return pk
+def pk_is_valid(pk):
+    try:
+        int(pk)
+    except (ValueError or TypeError):
+        return 'not_found_error_404'
+    return True
 
 
 def content_is_valid(content):
