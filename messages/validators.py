@@ -9,23 +9,30 @@ with open('error_codes.json', 'r') as f:
 
 
 
-def validate_pk(pk_str):
+def validate_pk(pk):
     try :
-        pk = int(pk_str)
+        pk = int(pk)
     except ValueError:
         return make_response(jsonify(**error_msgs.get('not_found_error_404')), 404)
     try :
-        pk = int(pk_str)
+        pk = int(pk)
     except TypeError:
         return make_response(jsonify(**error_msgs.get('not_found_error_404')), 404)
     return pk
 
-def validate_content(content):
-    if len(content) > MAX_CONTENT:
-        e = error_msgs.get('payload_too_large_413')
-        return make_response(jsonify(**e), 413)
-    if content == "":
-        e = error_msgs.get('bad_request_400')
-        return make_response(jsonify(**e), 400)
-    return content
 
+def content_is_valid(content):
+    if len(content) > MAX_CONTENT:
+        return 'payload_too_large_413'
+    if content == "":
+        return 'bad_request_400'
+    return True
+
+
+def token_is_valid(x):
+    return x == TOKEN
+
+
+def error_response(err_code):
+    e = error_msgs.get(err_code)
+    return make_response(jsonify(**e), e['code'])

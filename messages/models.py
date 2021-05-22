@@ -32,3 +32,9 @@ class MessageModel(db.Model):
         self.views += 1
         db.session.add(self)
         db.session.commit()
+
+    def update_content(self, content):
+        self.content = content
+        self.views = 0
+        db.session.add(self)
+        db.session.commit()
