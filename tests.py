@@ -27,6 +27,14 @@ class BasicTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(messages_count, response_messages_count)
 
+    def test_list_view_trailing_slash(self):
+        messages_count = len(MessageModel.query.all())
+        tester = app.test_client(self)
+        response = tester.get(f'/{API_URL}/')
+        response_messages_count = len(response.get_json())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(messages_count, response_messages_count)
+
     # ::::::::::: DETAIL VIEW TESTS :::::::::::::::
 
     def test_detail_view(self):

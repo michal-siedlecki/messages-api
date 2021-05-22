@@ -2,11 +2,11 @@ import json
 from config import MAX_CONTENT, TOKEN
 from flask import jsonify, make_response
 
-with open('error_codes.json', 'r') as f:
+with open('messages/error_codes.json', 'r') as f:
     error_msgs = json.load(f)
 
 
-# :::::::::::::::::: DECORATORS ::::::::::::::::::::::::::
+# :::::::::::::::::: VALIDATORS ::::::::::::::::::::::::::
 
 
 def pk_is_valid(pk):
